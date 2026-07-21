@@ -12,18 +12,6 @@ import { indexer } from "envio";
  * automatically indexed without touching the config.
  */
 
-import {
-  VaultFactory,
-  QuoteOnlyVault,
-} from "../generated/index.js";
-import type {
-  VaultFactory_VaultCreated_event,
-  QuoteOnlyVault_Deposit_event,
-  QuoteOnlyVault_Withdraw_event,
-  QuoteOnlyVault_Rebalance_event,
-  QuoteOnlyVault_Rebalanced_event,
-} from "../generated/src/Types.gen.js";
-
 import { snapshotVault } from "./utils";
 // Import block handler to register the periodic snapshot handler
 import "./BlockHandler.js";
@@ -33,13 +21,7 @@ import "./BlockHandler.js";
 // ---------------------------------------------------------------------------
 indexer.onEvent(
   { contract: "VaultFactory", event: "VaultCreated" },
-  async ({
-    event,
-    context,
-  }: {
-    event: VaultFactory_VaultCreated_event;
-    context: any;
-  }) => {
+  async ({ event, context }) => {
     const vaultAddr = event.params.vault.toLowerCase();
     const userAddr = event.params.user.toLowerCase();
     const factoryAddr = event.srcAddress.toLowerCase();
@@ -84,9 +66,9 @@ indexer.onEvent(
 // automatically start indexing that vault's events.
 indexer.contractRegister(
   { contract: "VaultFactory", event: "VaultCreated" },
-  async ({ event, context }) => {
-  context.chain.QuoteOnlyVault.add(event.params.vault);
-}
+  ({ event, context }) => {
+    context.chain.QuoteOnlyVault.add(event.params.vault);
+  }
 );
 
 // ---------------------------------------------------------------------------
@@ -94,13 +76,7 @@ indexer.contractRegister(
 // ---------------------------------------------------------------------------
 indexer.onEvent(
   { contract: "QuoteOnlyVault", event: "Deposit" },
-  async ({
-    event,
-    context,
-  }: {
-    event: QuoteOnlyVault_Deposit_event;
-    context: any;
-  }) => {
+  async ({ event, context }) => {
     const vaultAddr = event.srcAddress.toLowerCase();
     const userAddr = event.params.user.toLowerCase();
     const blockNumber = BigInt(event.block.number);
@@ -132,13 +108,7 @@ indexer.onEvent(
 // ---------------------------------------------------------------------------
 indexer.onEvent(
   { contract: "QuoteOnlyVault", event: "Withdraw" },
-  async ({
-    event,
-    context,
-  }: {
-    event: QuoteOnlyVault_Withdraw_event;
-    context: any;
-  }) => {
+  async ({ event, context }) => {
     const vaultAddr = event.srcAddress.toLowerCase();
     const userAddr = event.params.user.toLowerCase();
     const blockNumber = BigInt(event.block.number);
@@ -183,13 +153,7 @@ indexer.onEvent(
 // ---------------------------------------------------------------------------
 indexer.onEvent(
   { contract: "QuoteOnlyVault", event: "Rebalance" },
-  async ({
-    event,
-    context,
-  }: {
-    event: QuoteOnlyVault_Rebalance_event;
-    context: any;
-  }) => {
+  async ({ event, context }) => {
     await snapshotVault(
       event.srcAddress.toLowerCase(),
       BigInt(event.block.number),
@@ -205,13 +169,7 @@ indexer.onEvent(
 // ---------------------------------------------------------------------------
 indexer.onEvent(
   { contract: "QuoteOnlyVault", event: "Rebalanced" },
-  async ({
-    event,
-    context,
-  }: {
-    event: QuoteOnlyVault_Rebalanced_event;
-    context: any;
-  }) => {
+  async ({ event, context }) => {
     await snapshotVault(
       event.srcAddress.toLowerCase(),
       BigInt(event.block.number),

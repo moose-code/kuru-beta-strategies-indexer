@@ -17,7 +17,7 @@
  * time is dominated by the slowest single vault, not the total count.
  */
 
-import { indexer,  onBlock } from "../generated/index.js";
+import { indexer } from "envio";
 import { snapshotVault, publicClient } from "./utils";
 
 // Factory addresses (must match config.yaml), **lowercased** because
