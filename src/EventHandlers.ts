@@ -1,3 +1,4 @@
+import { indexer } from "envio";
 /**
  * EventHandlers.ts
  *
@@ -30,7 +31,8 @@ import "./BlockHandler.js";
 // ---------------------------------------------------------------------------
 // VaultFactory.VaultCreated
 // ---------------------------------------------------------------------------
-VaultFactory.VaultCreated.handler(
+indexer.onEvent(
+  { contract: "VaultFactory", event: "VaultCreated" },
   async ({
     event,
     context,
@@ -80,14 +82,18 @@ VaultFactory.VaultCreated.handler(
 
 // Register dynamic contracts: whenever a VaultCreated event is detected,
 // automatically start indexing that vault's events.
-VaultFactory.VaultCreated.contractRegister(({ event, context }) => {
-  context.addQuoteOnlyVault(event.params.vault);
-});
+indexer.contractRegister(
+  { contract: "VaultFactory", event: "VaultCreated" },
+  async ({ event, context }) => {
+  context.chain.QuoteOnlyVault.add(event.params.vault);
+}
+);
 
 // ---------------------------------------------------------------------------
 // QuoteOnlyVault.Deposit
 // ---------------------------------------------------------------------------
-QuoteOnlyVault.Deposit.handler(
+indexer.onEvent(
+  { contract: "QuoteOnlyVault", event: "Deposit" },
   async ({
     event,
     context,
@@ -124,7 +130,8 @@ QuoteOnlyVault.Deposit.handler(
 // ---------------------------------------------------------------------------
 // QuoteOnlyVault.Withdraw
 // ---------------------------------------------------------------------------
-QuoteOnlyVault.Withdraw.handler(
+indexer.onEvent(
+  { contract: "QuoteOnlyVault", event: "Withdraw" },
   async ({
     event,
     context,
@@ -174,7 +181,8 @@ QuoteOnlyVault.Withdraw.handler(
 // ---------------------------------------------------------------------------
 // QuoteOnlyVault.Rebalance  (owner-initiated relever)
 // ---------------------------------------------------------------------------
-QuoteOnlyVault.Rebalance.handler(
+indexer.onEvent(
+  { contract: "QuoteOnlyVault", event: "Rebalance" },
   async ({
     event,
     context,
@@ -195,7 +203,8 @@ QuoteOnlyVault.Rebalance.handler(
 // ---------------------------------------------------------------------------
 // QuoteOnlyVault.Rebalanced  (permissionless external rebalancer)
 // ---------------------------------------------------------------------------
-QuoteOnlyVault.Rebalanced.handler(
+indexer.onEvent(
+  { contract: "QuoteOnlyVault", event: "Rebalanced" },
   async ({
     event,
     context,

@@ -17,7 +17,7 @@
  * time is dominated by the slowest single vault, not the total count.
  */
 
-import { onBlock } from "../generated/index.js";
+import { indexer,  onBlock } from "../generated/index.js";
 import { snapshotVault, publicClient } from "./utils";
 
 // Factory addresses (must match config.yaml), **lowercased** because
@@ -29,7 +29,7 @@ const FACTORY_ADDRESSES = [
 ];
 
 // Register block handler: fires every 100 blocks for periodic snapshots.
-onBlock(
+indexer.onBlock(
   {
     name: "PeriodicSnapshot",
     chain: 143, // Monad mainnet
